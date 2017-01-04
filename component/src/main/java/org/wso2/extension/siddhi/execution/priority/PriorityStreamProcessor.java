@@ -134,7 +134,6 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
             if (attributeExpressionExecutors[0] instanceof VariableExpressionExecutor) {
                 this.keyExpressionExecutor = (VariableExpressionExecutor) attributeExpressionExecutors[0];
             } else {
-                // TODO: 12/8/16 say attribute name
                 throw new UnsupportedOperationException("First parameter of priority stream processor must be a variable but found " + attributeExpressionExecutors[0].getClass().getCanonicalName());
             }
 
