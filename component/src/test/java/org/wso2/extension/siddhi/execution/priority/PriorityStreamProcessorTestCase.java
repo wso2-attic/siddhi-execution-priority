@@ -17,17 +17,17 @@
  */
 package org.wso2.extension.siddhi.execution.priority;
 
-import junit.framework.Assert;
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.wso2.siddhi.core.ExecutionPlanRuntime;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
-import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
+import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,7 +36,7 @@ public class PriorityStreamProcessorTestCase {
     private AtomicInteger eventCount;
     private boolean eventArrived;
 
-    @Before
+    @BeforeMethod
     public void init() {
         eventCount = new AtomicInteger(0);
         eventArrived = false;
@@ -55,9 +55,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -65,11 +65,11 @@ public class PriorityStreamProcessorTestCase {
                     int count = eventCount.addAndGet(inEvents.length);
                     long priority = (Long) inEvents[0].getData(4);
                     if (count == 1) {
-                        Assert.assertEquals("Initial priority does not match with input", 1L, priority);
+                        AssertJUnit.assertEquals("Initial priority does not match with input", 1L, priority);
                     } else if (count == 2) {
-                        Assert.assertEquals("Priority is not increased by the second event", 4L, priority);
+                        AssertJUnit.assertEquals("Priority is not increased by the second event", 4L, priority);
                     } else {
-                        Assert.assertEquals("Priority is not increased by time", 6L - count, priority);
+                        AssertJUnit.assertEquals("Priority is not increased by time", 6L - count, priority);
                     }
                 }
                 eventArrived = true;
@@ -77,14 +77,14 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 1L, 0});
         inputHandler.send(new Object[]{"IBM", 3L, 1});
         Thread.sleep(5000);
-        Assert.assertEquals(6, eventCount.get());
-        Assert.assertTrue(eventArrived);
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(6, eventCount.get());
+        AssertJUnit.assertTrue(eventArrived);
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -100,29 +100,29 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
                 if (inEvents != null) {
                     eventCount.addAndGet(inEvents.length);
                     long priority = (Long) inEvents[0].getData(4);
-                    Assert.assertEquals("Initial priority does not match with input", 0L, priority);
+                    AssertJUnit.assertEquals("Initial priority does not match with input", 0L, priority);
                 }
                 eventArrived = true;
             }
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 0L, 0});
         Thread.sleep(2000);
-        Assert.assertEquals(1, eventCount.get());
-        Assert.assertTrue(eventArrived);
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(1, eventCount.get());
+        AssertJUnit.assertTrue(eventArrived);
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -138,9 +138,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -149,12 +149,12 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{null, 10L, 0});
         Thread.sleep(1000);
-        Assert.assertFalse(eventArrived);
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertFalse(eventArrived);
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -170,9 +170,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -181,12 +181,12 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", null, 0});
         Thread.sleep(1500);
-        Assert.assertFalse(eventArrived);
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertFalse(eventArrived);
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -202,9 +202,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -215,18 +215,18 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 2L, 0});
         inputHandler.send(new Object[]{"WSO2", 1L, 0});
         Thread.sleep(1000);
         inputHandler.send(new Object[]{"IBM", 1L, 1});
         Thread.sleep(2500);
-        Assert.assertEquals(7, eventCount.get());
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(7, eventCount.get());
+        siddhiAppRuntime.shutdown();
     }
 
-    @Test(expected = ExecutionPlanValidationException.class)
+    @Test(expectedExceptions = SiddhiAppValidationException.class)
     public void priorityTest6() throws InterruptedException {
         log.info("Priority Window test 6: Testing invalid number of arguments");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -239,10 +239,10 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
     }
 
-    @Test(expected = ExecutionPlanValidationException.class)
+    @Test(expectedExceptions = SiddhiAppValidationException.class)
     public void priorityTest7() throws InterruptedException {
         log.info("Priority Window test 7: Testing invalid first parameter");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -255,10 +255,10 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
     }
 
-    @Test(expected = ExecutionPlanValidationException.class)
+    @Test(expectedExceptions = SiddhiAppValidationException.class)
     public void priorityTest8() throws InterruptedException {
         log.info("Priority Window test 8: Testing invalid second parameter");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -271,10 +271,10 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
     }
 
-    @Test(expected = ExecutionPlanValidationException.class)
+    @Test(expectedExceptions = SiddhiAppValidationException.class)
     public void priorityTest9() throws InterruptedException {
         log.info("Priority Window test 9: Testing invalid third parameter");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -287,7 +287,7 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
     }
 
     @Test
@@ -303,9 +303,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -316,15 +316,15 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 2, 0});
         inputHandler.send(new Object[]{"WSO2", 1, 0});
         Thread.sleep(500);
         inputHandler.send(new Object[]{"IBM", 1, 1});
         Thread.sleep(1100);
-        Assert.assertEquals(7, eventCount.get());
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(7, eventCount.get());
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -340,9 +340,9 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
@@ -353,13 +353,13 @@ public class PriorityStreamProcessorTestCase {
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 10, 0});
         inputHandler.send(new Object[]{"IBM", -10, 0});
         Thread.sleep(1100);
-        Assert.assertEquals(2, eventCount.get());
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(2, eventCount.get());
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
@@ -375,28 +375,28 @@ public class PriorityStreamProcessorTestCase {
                 "select * " +
                 "insert all events into outputStream ;";
 
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
                 if (inEvents != null) {
                     int total = eventCount.addAndGet(inEvents.length);
                     if (total == 2) {
-                        Assert.assertEquals(0, inEvents[0].getData()[4]);   // Priority cannot be negative
+                        AssertJUnit.assertEquals(0, inEvents[0].getData()[4]);   // Priority cannot be negative
                     }
                 }
             }
 
         });
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("cseEventStream");
-        executionPlanRuntime.start();
+        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
+        siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 10, 0});
         inputHandler.send(new Object[]{"IBM", -100, 0});
         Thread.sleep(1100);
-        Assert.assertEquals(2, eventCount.get());
-        executionPlanRuntime.shutdown();
+        AssertJUnit.assertEquals(2, eventCount.get());
+        siddhiAppRuntime.shutdown();
     }
 }

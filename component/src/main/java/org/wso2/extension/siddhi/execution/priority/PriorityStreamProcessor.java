@@ -17,7 +17,9 @@
  */
 package org.wso2.extension.siddhi.execution.priority;
 
-import org.wso2.siddhi.core.config.ExecutionPlanContext;
+import org.wso2.siddhi.annotation.Example;
+import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.event.ComplexEventChunk;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventCloner;
@@ -29,11 +31,18 @@ import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.SchedulingProcessor;
 import org.wso2.siddhi.core.query.processor.stream.StreamProcessor;
 import org.wso2.siddhi.core.util.Scheduler;
+import org.wso2.siddhi.core.util.config.ConfigReader;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
+import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
 
 /**
  * PriorityStreamProcessor keeps track of the priority of events in a stream. This stream processor
@@ -61,6 +70,13 @@ import java.util.*;
  * <p>
  * When an event with existing id and a large negative priority, the output will be 0 not a negative priority.
  */
+
+@Extension(
+        name = "time",
+        namespace = "priority",
+        description = "PriorityStreamProcessor keeps track of the priority of events in a stream",
+        examples = @Example(description = "TBD", syntax = "TBD")
+)
 public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
 
     /**
@@ -84,9 +100,9 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
     private Scheduler scheduler;
 
     /**
-     * ExecutionPlanContext of Siddhi.
+     * SiddhiAppContext of Siddhi.
      */
-    private ExecutionPlanContext executionPlanContext;
+    private SiddhiAppContext siddhiAppContext;
 
     /**
      * Timestamp of the last event received by PriorityStreamProcessor.
@@ -119,13 +135,15 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
      *
      * @param inputDefinition              Input Definition
      * @param attributeExpressionExecutors Array of AttributeExpressionExecutor
-     * @param executionPlanContext         ExecutionPlanContext of Siddhi
+     * @param siddhiAppContext             SiddhiAppContext of Siddhi
      * @return list of new attributes injected by PriorityStreamProcessor
      */
     @Override
-    protected List<Attribute> init(AbstractDefinition inputDefinition, ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext executionPlanContext) {
+    protected List<Attribute> init(AbstractDefinition inputDefinition,
+                                   ExpressionExecutor[] attributeExpressionExecutors, ConfigReader configReader,
+                                   SiddhiAppContext siddhiAppContext) {
 
-        this.executionPlanContext = executionPlanContext;
+        this.siddhiAppContext = siddhiAppContext;
 
         // PriorityStreamProcessor requires 3 parameters: uniqueKey, priority, time
         if (attributeExpressionExecutors.length == 3) {
@@ -134,36 +152,44 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
             if (attributeExpressionExecutors[0] instanceof VariableExpressionExecutor) {
                 this.keyExpressionExecutor = (VariableExpressionExecutor) attributeExpressionExecutors[0];
             } else {
-                throw new UnsupportedOperationException("First parameter of priority stream processor must be a variable but found " + attributeExpressionExecutors[0].getClass().getCanonicalName());
+                throw new UnsupportedOperationException("First parameter of priority stream processor must be a " +
+                        "variable but found " + attributeExpressionExecutors[0].getClass().getCanonicalName());
             }
 
             // Second parameter: priority. Must be a variable of INT or LONG
             if (attributeExpressionExecutors[1] instanceof VariableExpressionExecutor) {
                 Attribute.Type type = attributeExpressionExecutors[1].getReturnType();
                 if (type != Attribute.Type.INT && type != Attribute.Type.LONG) {
-                    throw new ExecutionPlanValidationException("Second parameter of priority stream processor should be either int or long, but found " + type);
+                    throw new SiddhiAppValidationException("Second parameter of priority stream processor should be " +
+                            "either int or long, but found " + type);
                 }
                 this.priorityExpressionExecutor = (VariableExpressionExecutor) attributeExpressionExecutors[1];
             } else {
-                throw new UnsupportedOperationException("Second parameter of priority stream processor must be a variable but found " + attributeExpressionExecutors[1].getClass().getCanonicalName());
+                throw new UnsupportedOperationException("Second parameter of priority stream processor must be a " +
+                        "variable but found " + attributeExpressionExecutors[1].getClass().getCanonicalName());
             }
 
             // Third parameter: time. Must be a constant of INT or LONG
             if (attributeExpressionExecutors[2] instanceof ConstantExpressionExecutor) {
                 Attribute.Type type = attributeExpressionExecutors[2].getReturnType();
                 if (type == Attribute.Type.INT) {
-                    this.timeInMilliSeconds = (Integer) ((ConstantExpressionExecutor) attributeExpressionExecutors[2]).getValue();
+                    this.timeInMilliSeconds = (Integer) ((ConstantExpressionExecutor)
+                            attributeExpressionExecutors[2]).getValue();
                 } else if (type == Attribute.Type.LONG) {
-                    this.timeInMilliSeconds = (Long) ((ConstantExpressionExecutor) attributeExpressionExecutors[2]).getValue();
+                    this.timeInMilliSeconds = (Long) ((ConstantExpressionExecutor)
+                            attributeExpressionExecutors[2]).getValue();
                 } else {
-                    throw new ExecutionPlanValidationException("Third parameter of priority stream processor should be either int or long, but found " + type);
+                    throw new SiddhiAppValidationException("Third parameter of priority stream processor should be " +
+                            "either int or long, but found " + type);
                 }
             } else {
-                throw new ExecutionPlanValidationException("Third parameter of priority stream processor must be a variable but found " + attributeExpressionExecutors[2].getClass().getCanonicalName());
+                throw new SiddhiAppValidationException("Third parameter of priority stream processor must be a " +
+                        "variable but found " + attributeExpressionExecutors[2].getClass().getCanonicalName());
             }
         } else {
             // Invalid number of arguments
-            throw new UnsupportedOperationException("Invalid number of arguments passed to priority stream fin. Required 3, but found " + attributeExpressionExecutors.length);
+            throw new UnsupportedOperationException("Invalid number of arguments passed to priority stream fin. " +
+                    "Required 3, but found " + attributeExpressionExecutors.length);
         }
 
         List<Attribute> attributes = new ArrayList<Attribute>();
@@ -182,14 +208,15 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
      * @param complexEventPopulater helps to populate the events with the resultant attributes
      */
     @Override
-    protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor, StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+    protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor,
+                           StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
         synchronized (this) {
 
             while (streamEventChunk.hasNext()) {
                 StreamEvent streamEvent = streamEventChunk.next();
 
                 // Timer event sent by scheduler
-                long currentTime = executionPlanContext.getTimestampGenerator().currentTime();
+                long currentTime = siddhiAppContext.getTimestampGenerator().currentTime();
                 if (streamEvent.getType() == StreamEvent.Type.TIMER) {
                     while (!this.keyBuffer.isEmpty()) {
                         // Get the first the key from the queue
@@ -248,7 +275,8 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
                     }
 
                     // Add priorityKey and currentPriority to current stream
-                    complexEventPopulater.populateComplexEvent(streamEvent, new Object[]{key, eventHolder.getPriority()});
+                    complexEventPopulater.populateComplexEvent(streamEvent, new Object[]{key,
+                            eventHolder.getPriority()});
 
                 }
 
@@ -284,15 +312,16 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
     }
 
     @Override
-    public Object[] currentState() {
-        return new Object[]{this.eventHolderMap};
+    public synchronized Map<String, Object> currentState() {
+        Map<String, Object> currentStateMap = new HashMap<String, Object>();
+        currentStateMap.put("eventHolderMap", this.eventHolderMap);
+        return currentStateMap;
     }
 
     @Override
-    public void restoreState(Object[] state) {
-        this.eventHolderMap = (Map<Object, EventHolder>) state[0];
+    public synchronized void restoreState(Map<String, Object> map) {
+        this.eventHolderMap = (Map<Object, EventHolder>) map.get("eventHolderMap");
     }
-
 
     /**
      * This class holds events and performs utility operations on the stored event.
@@ -321,11 +350,14 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
          */
         public EventHolder(Object key, StreamEvent event) {
             if (key == null) {
-                throw new IllegalArgumentException("Priority unique key '" + keyExpressionExecutor.getAttribute().getName() + "' cannot be null");
+                throw new IllegalArgumentException("Priority unique key '" +
+                        keyExpressionExecutor.getAttribute().getName() + "' cannot be null");
             }
             this.priority = priorityExpressionExecutor.execute(event);
             if (this.priority == null) {
-                throw new IllegalArgumentException("Priority value '" + priorityExpressionExecutor.getAttribute().getName() + "' cannot be null, but event with priority key " + key + " contains a null priority");
+                throw new IllegalArgumentException("Priority value '" +
+                        priorityExpressionExecutor.getAttribute().getName() + "' cannot be null, " +
+                        "but event with priority key " + key + " contains a null priority");
             }
             this.key = key;
             this.event = event;
@@ -389,7 +421,7 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
         public StreamEvent copyStreamEvent() {
             StreamEvent clonedEvent = streamEventCloner.copyStreamEvent(event);
             complexEventPopulater.populateComplexEvent(clonedEvent, new Object[]{key, priority});
-            clonedEvent.setTimestamp(executionPlanContext.getTimestampGenerator().currentTime());
+            clonedEvent.setTimestamp(siddhiAppContext.getTimestampGenerator().currentTime());
             return clonedEvent;
         }
 
