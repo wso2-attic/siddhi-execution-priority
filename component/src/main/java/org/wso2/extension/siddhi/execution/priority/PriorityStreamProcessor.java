@@ -19,6 +19,8 @@ package org.wso2.extension.siddhi.execution.priority;
 
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.event.ComplexEventChunk;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
@@ -75,7 +77,20 @@ import java.util.Queue;
         name = "time",
         namespace = "priority",
         description = "PriorityStreamProcessor keeps track of the priority of events in a stream",
-        examples = @Example(description = "TBD", syntax = "TBD")
+        parameters = {
+                @Parameter(name = "unique.key",
+                        description = "The unique key variable to identify the event.",
+                        type = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INT, DataType.LONG,
+                                DataType.OBJECT}),
+                @Parameter(name = "priority",
+                        description = "Variable that contains the priority increment.",
+                        type = {DataType.INT, DataType.LONG}),
+                @Parameter(name = "timeout.constant",
+                        description = "Constant value to decrease the priority by one after the given timeout.",
+                        type = {DataType.INT, DataType.LONG})
+        },
+        examples = @Example(description = "This will keep track of the priority of events in a stream and injects " +
+                "the priority key and current priority to the output event.", syntax = "time(symbol, priority, 1 sec)")
 )
 public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
 

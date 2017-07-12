@@ -23,3 +23,7 @@ When an event with existing priority key arrives, it will be stored as the recen
 After every given timeout, priority of every events will be reduced by 1 and the updated priority, will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.
 
 When an event with existing id and a large negative priority, the output will be 0 not a negative priority.
+
+## API Docs:
+
+1. <a href="./api/4.0.2-SNAPSHOT">4.0.2-SNAPSHOT</a>
