@@ -90,7 +90,7 @@ import java.util.Queue;
                         type = {DataType.INT, DataType.LONG})
         },
         examples = @Example(description = "This keeps track of the priority of events in a stream and injects " +
-                "the priority key and thebcurrent priority to the output event.",
+                "the priority key and the current priority to the output event.",
                 syntax = "time(symbol, priority, 1 sec)")
 )
 public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
