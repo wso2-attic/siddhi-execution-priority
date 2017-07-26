@@ -76,7 +76,7 @@ import java.util.Queue;
 @Extension(
         name = "time",
         namespace = "priority",
-        description = "PriorityStreamProcessor keeps track of the priority of events in a stream",
+        description = "The PriorityStreamProcessor keeps track of the priority of events in a stream",
         parameters = {
                 @Parameter(name = "unique.key",
                         description = "The unique key variable to identify the event.",
@@ -86,11 +86,12 @@ import java.util.Queue;
                         description = "Variable that contains the priority increment.",
                         type = {DataType.INT, DataType.LONG}),
                 @Parameter(name = "timeout.constant",
-                        description = "Constant value to decrease the priority by one after the given timeout.",
+                        description = "The constant value to decrease the priority by one after the given timeout.",
                         type = {DataType.INT, DataType.LONG})
         },
-        examples = @Example(description = "This will keep track of the priority of events in a stream and injects " +
-                "the priority key and current priority to the output event.", syntax = "time(symbol, priority, 1 sec)")
+        examples = @Example(description = "This keeps track of the priority of events in a stream and injects " +
+                "the priority key and thebcurrent priority to the output event.",
+                syntax = "time(symbol, priority, 1 sec)")
 )
 public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
 
