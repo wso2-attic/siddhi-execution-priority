@@ -76,7 +76,20 @@ import java.util.Queue;
 @Extension(
         name = "time",
         namespace = "priority",
-        description = "The PriorityStreamProcessor keeps track of the priority of events in a stream",
+        description = "The PriorityStreamProcessor keeps track of the priority of events in a stream"
+                       + "When an event with new unique key arrives, PriorityStreamProcessor checks the priority"
+                       + " and if the priority is 0 the event will be sent out without being stored internally."
+                       + " If the event has a priority greater than 0, it will be stored in the stream processor"
+                       + " and the current priority will be injected into that event. "
+                       + " When an event with existing priority key arrives, it will be stored as"
+                       + " the recent event and the priority will be increased by the priority of the received event,"
+                       + " and the priorityKey and "
+                       + " currentPriority will be injected into the event. After every given timeout,"
+                       + " priority of every events will be reduced by 1 and the updated priority"
+                       + " will be sent out with the last known attributes of those events."
+                       + " It will continue until their"
+                       + " priority reduced to 0."
+        ,
         parameters = {
                 @Parameter(name = "unique.key",
                         description = "The unique key variable to identify the event.",
@@ -88,6 +101,7 @@ import java.util.Queue;
                 @Parameter(name = "timeout.constant",
                         description = "The constant value to decrease the priority by one after the given timeout.",
                         type = {DataType.INT, DataType.LONG})
+
         },
         examples = @Example(description = "This keeps track of the priority of events in a stream and injects " +
                 "the priority key and the current priority to the output event.",
