@@ -76,8 +76,8 @@ import java.util.Queue;
 @Extension(
         name = "time",
         namespace = "priority",
-        description = "The PriorityStreamProcessor keeps track of the priority of events in a stream"
-                       + "When an event with new unique key arrives, PriorityStreamProcessor checks the priority"
+        description = "The PriorityStreamProcessor keeps track of the priority of events in a stream."
+                       + " When an event with new unique key arrives, PriorityStreamProcessor checks the priority"
                        + " and if the priority is 0 the event will be sent out without being stored internally."
                        + " If the event has a priority greater than 0, it will be stored in the stream processor"
                        + " and the current priority will be injected into that event. "
