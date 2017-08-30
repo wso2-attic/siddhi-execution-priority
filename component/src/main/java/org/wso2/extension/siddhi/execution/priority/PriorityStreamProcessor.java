@@ -17,6 +17,7 @@
  */
 package org.wso2.extension.siddhi.execution.priority;
 
+import org.apache.log4j.Logger;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.annotation.Parameter;
@@ -44,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
 
 /**
  * PriorityStreamProcessor keeps track of the priority of events in a stream. This stream processor
@@ -108,6 +108,11 @@ import java.util.Queue;
                 syntax = "time(symbol, priority, 1 sec)")
 )
 public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
+
+    /**
+     * Logger to log events of the class
+     */
+    private static final Logger log = Logger.getLogger(PriorityStreamProcessor.class);
 
     /**
      * First attribute name injected by PriorityStreamProcessor into the output stream event.
@@ -257,7 +262,12 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
                         long timeDiff = eventHolder.getTimestamp() + timeInMilliSeconds - currentTime;
                         if (timeDiff <= 0) {
                             // Remove the first key from the queue
-                            this.keyBuffer.poll();
+                            final Object poll = this.keyBuffer.poll();
+                            if (null == poll) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("The Queue is empty. There are no events to remove.");
+                                }
+                            }
 
                             // Decrease the priority
                             eventHolder.decreasePriority(currentTime);
@@ -265,7 +275,11 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
                                 this.eventHolderMap.remove(key);
                             } else {
                                 // If not expired, add the key to the end of the queue
-                                this.keyBuffer.offer(key);
+                                boolean isAdded = this.keyBuffer.offer(key);
+                                if (!isAdded) {
+                                    log.error("Task of adding '" + key + "' to the"
+                                            + "queue couldn't be complete.");
+                                }
                             }
                             streamEventChunk.insertBeforeCurrent(eventHolder.copyStreamEvent());
                         } else {
@@ -292,7 +306,11 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
                             this.eventHolderMap.put(key, eventHolder);
 
                             // Add the key into the queue
-                            this.keyBuffer.offer(key);
+                            boolean isAdded = this.keyBuffer.offer(key);
+                            if (!isAdded) {
+                                log.error("Task of adding '" + key + "' to the"
+                                        + "queue couldn't be complete.");
+                            }
                         }
 
                     } else {
