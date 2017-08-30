@@ -27,6 +27,7 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
+import org.wso2.siddhi.core.util.SiddhiTestHelper;
 import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,6 +36,8 @@ public class PriorityStreamProcessorTestCase {
     private static final Logger log = Logger.getLogger(PriorityStreamProcessorTestCase.class);
     private AtomicInteger eventCount;
     private boolean eventArrived;
+    private int waitTime = 50;
+    private int timeout = 5000;
 
     @BeforeMethod
     public void init() {
@@ -81,7 +84,8 @@ public class PriorityStreamProcessorTestCase {
         siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 1L, 0});
         inputHandler.send(new Object[]{"IBM", 3L, 1});
-        Thread.sleep(5000);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 6, eventCount, timeout);
         AssertJUnit.assertEquals(6, eventCount.get());
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
@@ -119,7 +123,8 @@ public class PriorityStreamProcessorTestCase {
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("cseEventStream");
         siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 0L, 0});
-        Thread.sleep(2000);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 1, eventCount, timeout);
         AssertJUnit.assertEquals(1, eventCount.get());
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
@@ -221,7 +226,8 @@ public class PriorityStreamProcessorTestCase {
         inputHandler.send(new Object[]{"WSO2", 1L, 0});
         Thread.sleep(1000);
         inputHandler.send(new Object[]{"IBM", 1L, 1});
-        Thread.sleep(2500);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 7, eventCount, timeout);
         AssertJUnit.assertEquals(7, eventCount.get());
         siddhiAppRuntime.shutdown();
     }
@@ -322,7 +328,8 @@ public class PriorityStreamProcessorTestCase {
         inputHandler.send(new Object[]{"WSO2", 1, 0});
         Thread.sleep(500);
         inputHandler.send(new Object[]{"IBM", 1, 1});
-        Thread.sleep(1100);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 7, eventCount, timeout);
         AssertJUnit.assertEquals(7, eventCount.get());
         siddhiAppRuntime.shutdown();
     }
@@ -357,7 +364,8 @@ public class PriorityStreamProcessorTestCase {
         siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 10, 0});
         inputHandler.send(new Object[]{"IBM", -10, 0});
-        Thread.sleep(1100);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 2, eventCount, timeout);
         AssertJUnit.assertEquals(2, eventCount.get());
         siddhiAppRuntime.shutdown();
     }
@@ -395,7 +403,8 @@ public class PriorityStreamProcessorTestCase {
         siddhiAppRuntime.start();
         inputHandler.send(new Object[]{"IBM", 10, 0});
         inputHandler.send(new Object[]{"IBM", -100, 0});
-        Thread.sleep(1100);
+
+        SiddhiTestHelper.waitForEvents(waitTime, 2, eventCount, timeout);
         AssertJUnit.assertEquals(2, eventCount.get());
         siddhiAppRuntime.shutdown();
     }
