@@ -1,4 +1,4 @@
-site_name: Siddhi-Execution-Unique
+site_name: Siddhi-Execution-Priority
 extra_css:
 - stylesheets/extra.css
 extra_javascript:
@@ -13,7 +13,7 @@ google_analytics:
 - UA-103065-28
 - auto
 pages:
-- Welcome to WSO2 Siddhi Execution Unique: index.md
+- Welcome to WSO2 Siddhi Execution Priority: index.md
 - API Docs:
   - 4.0.2-SNAPSHOT: api/4.0.2-SNAPSHOT.md
 - License: license.md
