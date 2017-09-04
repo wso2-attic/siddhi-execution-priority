@@ -10,7 +10,7 @@
       
       
       
-        <link rel="shortcut icon" href="./assets/images/favicon.png">
+        <link rel="shortcut icon" href="./images/favicon.ico">
       
       <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.7.4">
     
@@ -168,8 +168,50 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-docs" title="API Docs:" class="md-nav__link">
-    API Docs:
+  <a href="#latest-api-docs" title="Latest API Docs" class="md-nav__link">
+    Latest API Docs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use" title="How to use" class="md-nav__link">
+    How to use
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jenkins-build-status" title="Jenkins Build Status" class="md-nav__link">
+    Jenkins Build Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#features" title="Features" class="md-nav__link">
+    Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" title="How to Contribute" class="md-nav__link">
+    How to Contribute
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contact-us" title="Contact us" class="md-nav__link">
+    Contact us
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support" title="Support" class="md-nav__link">
+    Support
   </a>
   
 </li>
@@ -193,47 +235,11 @@
       <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
     
     <label class="md-nav__link" for="nav-2">
-      About
+      API Docs
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
       <label class="md-nav__title" for="nav-2">
-        About
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="about/license/" title="License" class="md-nav__link">
-      License
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
-    
-    <label class="md-nav__link" for="nav-3">
-      Api
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Api
+        API Docs
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -252,6 +258,18 @@
         
       </ul>
     </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="license/" title="License" class="md-nav__link">
+      License
+    </a>
   </li>
 
     
@@ -276,8 +294,50 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-docs" title="API Docs:" class="md-nav__link">
-    API Docs:
+  <a href="#latest-api-docs" title="Latest API Docs" class="md-nav__link">
+    Latest API Docs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use" title="How to use" class="md-nav__link">
+    How to use
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jenkins-build-status" title="Jenkins Build Status" class="md-nav__link">
+    Jenkins Build Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#features" title="Features" class="md-nav__link">
+    Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" title="How to Contribute" class="md-nav__link">
+    How to Contribute
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contact-us" title="Contact us" class="md-nav__link">
+    Contact us
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support" title="Support" class="md-nav__link">
+    Support
   </a>
   
 </li>
@@ -297,27 +357,87 @@
               
                 
                 
-                <h1 id="wso2-extension-siddhi-execution-priority">WSO2 Extension Siddhi Execution Priority</h1>
-<p>PriorityStreamProcessor keeps track of the priority of events in a stream. This stream processor requires three arguments which are:</p>
+                <h1 id="siddhi-execution-priority">siddhi-execution-priority</h1>
+<p>The <strong>siddhi-execution-priority extension</strong> is an extension to <a target="_blank" href="https://wso2.github.io/siddhi">Siddhi</a> that keeps track of the priority of events in a stream.</p>
+<p>Find some useful links below:</p>
 <ul>
-<li>Unique key variable to identify the event</li>
-<li>Priority variable which contains the priority increment</li>
-<li>Timeout in constant to decrease the priority by one after the given timeout</li>
+<li><a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority">Source code</a></li>
+<li><a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority/releases">Releases</a></li>
+<li><a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority/issues">Issue tracker</a></li>
 </ul>
-<p>PriorityStreamProcessor injects two new attributes into the stream which are</p>
+<h2 id="latest-api-docs">Latest API Docs</h2>
+<p>Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.2-SNAPSHOT">4.0.2-SNAPSHOT</a>.</p>
+<h2 id="how-to-use">How to use</h2>
+<p><strong>Using the extension in <a target="_blank" href="https://github.com/wso2/product-sp">WSO2 Stream Processor</a></strong></p>
 <ul>
-<li>priorityKey </li>
-<li>currentPriority</li>
+<li>
+<p>You can use this extension in the latest <a target="_blank" href="https://github.com/wso2/product-sp/releases">WSO2 Stream Processor</a> that is a part of <a target="_blank" href="http://wso2.com/analytics?utm_source=gitanalytics&utm_campaign=gitanalytics_Jul17">WSO2 Analytics</a> offering, with editor, debugger and simulation support. </p>
+</li>
+<li>
+<p>This extension is shipped by default with WSO2 Stream Processor, if you wish to use an alternative version of this extension you can replace the component <a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority/releases">jar</a> that can be found in the <code>&lt;STREAM_PROCESSOR_HOME&gt;/lib</code> directory.</p>
+</li>
 </ul>
-<p>When an event with new unique key arrives, PriorityStreamProcessor checks the priority and if the priority is 0 the event will be sent out without being stored internally. 
-If the event has a priority greater than 0, it will be stored in the stream processor and the current priority will be injected into that event.</p>
-<p>When an event with existing priority key arrives, it will be stored as the recent event and the priority will be increased by the priority of the received event, and the priorityKey and currentPriority will be injected into the event.</p>
-<p>After every given timeout, priority of every events will be reduced by 1 and the updated priority, will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.</p>
-<p>When an event with existing id and a large negative priority, the output will be 0 not a negative priority.</p>
-<h2 id="api-docs">API Docs:</h2>
-<ol>
-<li><a href="./api/4.0.2-SNAPSHOT">4.0.2-SNAPSHOT</a></li>
-</ol>
+<p><strong>Using the extension as a <a target="_blank" href="https://wso2.github.io/siddhi/documentation/running-as-a-java-library">java library</a></strong></p>
+<ul>
+<li>This extension can be added as a maven dependency along with other Siddhi dependencies to your project.</li>
+</ul>
+<pre><code>     &lt;dependency&gt;
+        &lt;groupId&gt;org.wso2.extension.siddhi.execution.priority&lt;/groupId&gt;
+        &lt;artifactId&gt;siddhi-execution-priority&lt;/artifactId&gt;
+        &lt;version&gt;x.x.x&lt;/version&gt;
+     &lt;/dependency&gt;
+</code></pre>
+
+<h2 id="jenkins-build-status">Jenkins Build Status</h2>
+<hr />
+<table>
+<thead>
+<tr>
+<th align="left">Branch</th>
+<th align="left">Build Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">master</td>
+<td align="left"><a href="https://wso2.org/jenkins/job/siddhi/job/siddhi-execution-priority/"><img alt="Build Status" src="https://wso2.org/jenkins/job/siddhi/job/siddhi-execution-priority/badge/icon" /></a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="features">Features</h2>
+<ul>
+<li><a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.2-SNAPSHOT/#time-stream-processor">time</a> <em>(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)</em><br><div style="padding-left: 1em;"><p>The PriorityStreamProcessor keeps track of the priority of events in a stream. When an event with new unique key arrives, PriorityStreamProcessor checks the priority and if the priority is 0 the event will be sent out without being stored internally. If the event has a priority greater than 0, it will be stored in the stream processor and the current priority will be injected into that event.  When an event with existing priority key arrives, it will be stored as the recent event and the priority will be increased by the priority of the received event, and the priorityKey and  currentPriority will be injected into the event. After every given timeout, priority of every events will be reduced by 1 and the updated priority will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.</p></div></li>
+</ul>
+<h2 id="how-to-contribute">How to Contribute</h2>
+<ul>
+<li>
+<p>Please report issues at <a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority/issues">GitHub Issue Tracker</a>.</p>
+</li>
+<li>
+<p>Send your contributions as pull requests to <a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-priority/tree/master">master branch</a>. </p>
+</li>
+</ul>
+<h2 id="contact-us">Contact us</h2>
+<ul>
+<li>
+<p>Post your questions with the <a target="_blank" href="http://stackoverflow.com/search?q=siddhi">"Siddhi"</a> tag in <a target="_blank" href="http://stackoverflow.com/search?q=siddhi">Stackoverflow</a>. </p>
+</li>
+<li>
+<p>Siddhi developers can be contacted via the mailing lists:</p>
+<p>Developers List   : <a href="mailto:dev@wso2.org">dev@wso2.org</a></p>
+<p>Architecture List : <a href="mailto:architecture@wso2.org">architecture@wso2.org</a></p>
+</li>
+</ul>
+<h2 id="support">Support</h2>
+<ul>
+<li>
+<p>We are committed to ensuring support for this extension in production. Our unique approach ensures that all support leverages our open development methodology and is provided by the very same engineers who build the technology. </p>
+</li>
+<li>
+<p>For more details and to take advantage of this unique opportunity contact us via <a target="_blank" href="http://wso2.com/support?utm_source=gitanalytics&utm_campaign=gitanalytics_Jul17">http://wso2.com/support/</a>. </p>
+</li>
+</ul>
                 
                   
                 
@@ -337,13 +457,13 @@ If the event has a priority greater than 0, it will be stored in the stream proc
       <nav class="md-footer-nav__inner md-grid">
         
         
-          <a href="about/license/" title="License" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="api/4.0.2-SNAPSHOT/" title="4.0.2-SNAPSHOT" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                License
+                4.0.2-SNAPSHOT
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -378,8 +498,12 @@ If the event has a priority greater than 0, it will be stored in the stream proc
       
       <script>app.initialize({url:{base:"."}})</script>
       
+        <script src="./javascripts/extra.js"></script>
+      
     
     
+      
+      <script>!function(e,t,a,n,o,c,i){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,c=t.createElement(a),i=t.getElementsByTagName(a)[0],c.async=1,c.src=n,i.parentNode.insertBefore(c,i)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-103065-28","auto"),ga("set","anonymizeIp",!0),ga("send","pageview");var links=document.getElementsByTagName("a");Array.prototype.map.call(links,function(e){e.host!=document.location.host&&e.addEventListener("click",function(){var t=e.getAttribute("data-md-action")||"follow";ga("send","event","outbound",t,e.href)})});var query=document.forms.search.query;query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})</script>
       
     
   </body>
