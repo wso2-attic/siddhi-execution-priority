@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
@@ -232,7 +233,7 @@ public class PriorityStreamProcessorTestCase {
         siddhiAppRuntime.shutdown();
     }
 
-    @Test(expectedExceptions = SiddhiAppValidationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class)
     public void priorityTest6() throws InterruptedException {
         log.info("Priority Window test 6: Testing invalid number of arguments");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -264,7 +265,7 @@ public class PriorityStreamProcessorTestCase {
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(cseEventStream + query);
     }
 
-    @Test(expectedExceptions = SiddhiAppValidationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class)
     public void priorityTest8() throws InterruptedException {
         log.info("Priority Window test 8: Testing invalid second parameter");
         SiddhiManager siddhiManager = new SiddhiManager();
