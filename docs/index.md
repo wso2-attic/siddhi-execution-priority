@@ -11,7 +11,7 @@ Find some useful links below:
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.5">4.0.5</a>.
+Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.6">4.0.6</a>.
 
 ## How to use 
 
@@ -45,7 +45,7 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.5/#time-stream-processor">time</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>)*<br><div style="padding-left: 1em;"><p>The PriorityStreamProcessor keeps track of the priority of events in a stream. When an event with new unique key arrives, PriorityStreamProcessor checks the priority and if the priority is 0 the event will be sent out without being stored internally. If the event has a priority greater than 0, it will be stored in the stream processor and the current priority will be injected into that event.  When an event with existing priority key arrives, it will be stored as the recent event and the priority will be increased by the priority of the received event, and the priorityKey and  currentPriority will be injected into the event. After every given timeout, priority of every events will be reduced by 1 and the updated priority will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-execution-priority/api/4.0.6/#time-stream-processor">time</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>)*<br><div style="padding-left: 1em;"><p>The PriorityStreamProcessor keeps track of the priority of events in a stream. When an event with new unique key arrives, PriorityStreamProcessor checks the priority and if the priority is 0 the event will be sent out without being stored internally. If the event has a priority greater than 0, it will be stored in the stream processor and the current priority will be injected into that event.  When an event with existing priority key arrives, it will be stored as the recent event and the priority will be increased by the priority of the received event, and the priorityKey and  currentPriority will be injected into the event. After every given timeout, priority of every events will be reduced by 1 and the updated priority will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.</p></div>
 
 ## How to Contribute
  
