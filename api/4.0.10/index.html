@@ -16,7 +16,7 @@
     
     
       
-        <title>4.0.7 - Siddhi-Execution-Priority</title>
+        <title>4.0.10 - Siddhi-Execution-Priority</title>
       
     
     
@@ -84,7 +84,7 @@
                 </span>
               
             
-            4.0.7
+            4.0.10
           
         </span>
       </div>
@@ -181,42 +181,6 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../4.0.10/" title="4.0.10" class="md-nav__link">
-      4.0.10
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../4.0.9/" title="4.0.9" class="md-nav__link">
-      4.0.9
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../4.0.8/" title="4.0.8" class="md-nav__link">
-      4.0.8
-    </a>
-  </li>
-
-        
-          
-          
-          
-
   
 
 
@@ -228,11 +192,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        4.0.7
+        4.0.10
       </label>
     
-    <a href="./" title="4.0.7" class="md-nav__link md-nav__link--active">
-      4.0.7
+    <a href="./" title="4.0.10" class="md-nav__link md-nav__link--active">
+      4.0.10
     </a>
     
       
@@ -271,6 +235,42 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../4.0.9/" title="4.0.9" class="md-nav__link">
+      4.0.9
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../4.0.8/" title="4.0.8" class="md-nav__link">
+      4.0.8
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../4.0.7/" title="4.0.7" class="md-nav__link">
+      4.0.7
+    </a>
   </li>
 
         
@@ -406,7 +406,7 @@
               
                 
                 
-                <h1 id="api-docs-v407">API Docs - v4.0.7</h1>
+                <h1 id="api-docs-v4010">API Docs - v4.0.10</h1>
 <h2 id="priority">Priority</h2>
 <h3 id="time-stream-processor">time <em><a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a></em></h3>
 <p style="word-wrap: break-word">The PriorityStreamProcessor keeps track of the priority of events in a stream. When an event with new unique key arrives, PriorityStreamProcessor checks the priority and if the priority is 0 the event will be sent out without being stored internally. If the event has a priority greater than 0, it will be stored in the stream processor and the current priority will be injected into that event.  When an event with existing priority key arrives, it will be stored as the recent event and the priority will be increased by the priority of the received event, and the priorityKey and  currentPriority will be injected into the event. After every given timeout, priority of every events will be reduced by 1 and the updated priority will be sent out with the last known attributes of those events. It will continue until their priority reduced to 0.</p>
@@ -449,6 +449,24 @@
         <td style="vertical-align: top">No</td>
         <td style="vertical-align: top">No</td>
     </tr>
+</table>
+<span id="extra-return-attributes" class="md-typeset" style="display: block; font-weight: bold;">Extra Return Attributes</span>
+<table>
+    <tr>
+        <th>Name</th>
+        <th style="min-width: 20em">Description</th>
+        <th>Possible Types</th>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">priorityKey</td>
+        <td style="vertical-align: top; word-wrap: break-word">Key for which the priority is calculated</td>
+        <td style="vertical-align: top">STRING</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">currentPriority</td>
+        <td style="vertical-align: top; word-wrap: break-word">Current priority associated with the given key</td>
+        <td style="vertical-align: top">STRING</td>
+    </tr>
 </table></p>
 <p><span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
 <span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span></p>
@@ -474,7 +492,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../4.0.8/" title="4.0.8" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../.." title="Welcome to WSO2 Siddhi Execution Priority" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -483,19 +501,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                4.0.8
+                Welcome to WSO2 Siddhi Execution Priority
               </span>
             </div>
           </a>
         
         
-          <a href="../4.0.6/" title="4.0.6" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../4.0.9/" title="4.0.9" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                4.0.6
+                4.0.9
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
