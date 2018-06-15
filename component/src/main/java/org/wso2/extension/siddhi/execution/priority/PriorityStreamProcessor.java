@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.ReturnAttribute;
 import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.event.ComplexEventChunk;
@@ -45,6 +46,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
+import static org.wso2.extension.siddhi.execution.priority.PriorityStreamProcessor.ATTRIBUTE_CURRENT_PRIORITY;
+import static org.wso2.extension.siddhi.execution.priority.PriorityStreamProcessor.ATTRIBUTE_PRIORITY_KEY;
 
 /**
  * PriorityStreamProcessor keeps track of the priority of events in a stream. This stream processor
@@ -102,6 +106,18 @@ import java.util.Queue;
                         description = "The constant value to decrease the priority by one after the given timeout.",
                         type = {DataType.INT, DataType.LONG})
 
+        },
+        returnAttributes = {
+                @ReturnAttribute(
+                        name = ATTRIBUTE_PRIORITY_KEY,
+                        description = "Key for which the priority is calculated",
+                        type = {DataType.STRING}
+                ),
+                @ReturnAttribute(
+                        name = ATTRIBUTE_CURRENT_PRIORITY,
+                        description = "Current priority associated with the given key",
+                        type = {DataType.STRING}
+                )
         },
         examples = @Example(description = "This keeps track of the priority of events in a stream and injects " +
                 "the priority key and the current priority to the output event.",
