@@ -17,28 +17,34 @@
  */
 package org.wso2.extension.siddhi.execution.priority;
 
+import io.siddhi.annotation.Example;
+import io.siddhi.annotation.Extension;
+import io.siddhi.annotation.Parameter;
+import io.siddhi.annotation.ReturnAttribute;
+import io.siddhi.annotation.util.DataType;
+import io.siddhi.core.config.SiddhiAppContext;
+import io.siddhi.core.config.SiddhiQueryContext;
+import io.siddhi.core.event.ComplexEventChunk;
+import io.siddhi.core.event.stream.MetaStreamEvent;
+import io.siddhi.core.event.stream.StreamEvent;
+import io.siddhi.core.event.stream.StreamEventCloner;
+import io.siddhi.core.event.stream.holder.StreamEventClonerHolder;
+import io.siddhi.core.event.stream.populater.ComplexEventPopulater;
+import io.siddhi.core.executor.ConstantExpressionExecutor;
+import io.siddhi.core.executor.ExpressionExecutor;
+import io.siddhi.core.executor.VariableExpressionExecutor;
+import io.siddhi.core.query.processor.ProcessingMode;
+import io.siddhi.core.query.processor.Processor;
+import io.siddhi.core.query.processor.SchedulingProcessor;
+import io.siddhi.core.query.processor.stream.StreamProcessor;
+import io.siddhi.core.util.Scheduler;
+import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
+import io.siddhi.query.api.definition.AbstractDefinition;
+import io.siddhi.query.api.definition.Attribute;
+import io.siddhi.query.api.exception.SiddhiAppValidationException;
 import org.apache.log4j.Logger;
-import org.wso2.siddhi.annotation.Example;
-import org.wso2.siddhi.annotation.Extension;
-import org.wso2.siddhi.annotation.Parameter;
-import org.wso2.siddhi.annotation.ReturnAttribute;
-import org.wso2.siddhi.annotation.util.DataType;
-import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.event.ComplexEventChunk;
-import org.wso2.siddhi.core.event.stream.StreamEvent;
-import org.wso2.siddhi.core.event.stream.StreamEventCloner;
-import org.wso2.siddhi.core.event.stream.populater.ComplexEventPopulater;
-import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
-import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
-import org.wso2.siddhi.core.query.processor.Processor;
-import org.wso2.siddhi.core.query.processor.SchedulingProcessor;
-import org.wso2.siddhi.core.query.processor.stream.StreamProcessor;
-import org.wso2.siddhi.core.util.Scheduler;
-import org.wso2.siddhi.core.util.config.ConfigReader;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -123,7 +129,8 @@ import static org.wso2.extension.siddhi.execution.priority.PriorityStreamProcess
                 "the priority key and the current priority to the output event.",
                 syntax = "time(symbol, priority, 1 sec)")
 )
-public class PriorityStreamProcessor extends StreamProcessor implements SchedulingProcessor {
+public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProcessor.ExtensionState>
+        implements SchedulingProcessor {
 
     /**
      * Logger to log events of the class
@@ -181,20 +188,24 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
      */
     private final Queue<Object> keyBuffer = new ArrayDeque<Object>();
 
+    private List<Attribute> attributes = new ArrayList<Attribute>();
+
     /**
      * Initialize the PriorityStreamProcessor.
      *
      * @param inputDefinition              Input Definition
      * @param attributeExpressionExecutors Array of AttributeExpressionExecutor
-     * @param siddhiAppContext             SiddhiAppContext of Siddhi
+     * @param siddhiQueryContext           siddhiQueryContext of Siddhi
      * @return list of new attributes injected by PriorityStreamProcessor
      */
     @Override
-    protected List<Attribute> init(AbstractDefinition inputDefinition,
-                                   ExpressionExecutor[] attributeExpressionExecutors, ConfigReader configReader,
-                                   SiddhiAppContext siddhiAppContext) {
-
-        this.siddhiAppContext = siddhiAppContext;
+    protected StateFactory<ExtensionState> init(MetaStreamEvent metaStreamEvent, AbstractDefinition inputDefinition,
+                                                ExpressionExecutor[] attributeExpressionExecutors,
+                                                ConfigReader configReader,
+                                                StreamEventClonerHolder streamEventClonerHolder,
+                                                boolean outputExpectsExpiredEvents, boolean findToBeExecuted,
+                                                SiddhiQueryContext siddhiQueryContext) {
+        this.siddhiAppContext = siddhiQueryContext.getSiddhiAppContext();
 
         // PriorityStreamProcessor requires 3 parameters: uniqueKey, priority, time
         if (attributeExpressionExecutors.length == 3) {
@@ -243,11 +254,11 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
                     "Required 3, but found " + attributeExpressionExecutors.length);
         }
 
-        List<Attribute> attributes = new ArrayList<Attribute>();
         attributes.add(new Attribute(ATTRIBUTE_PRIORITY_KEY, keyExpressionExecutor.getAttribute().getType()));
         attributes.add(new Attribute(ATTRIBUTE_CURRENT_PRIORITY, priorityExpressionExecutor.getAttribute().getType()));
 
-        return attributes;
+        return () -> new ExtensionState();
+
     }
 
     /**
@@ -260,7 +271,8 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
      */
     @Override
     protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor,
-                           StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+                           StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater,
+                           ExtensionState state) {
         synchronized (this) {
 
             while (streamEventChunk.hasNext()) {
@@ -376,15 +388,37 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
     }
 
     @Override
-    public synchronized Map<String, Object> currentState() {
-        Map<String, Object> currentStateMap = new HashMap<String, Object>();
-        currentStateMap.put("eventHolderMap", this.eventHolderMap);
-        return currentStateMap;
+    public List<Attribute> getReturnAttributes() {
+        return attributes;
     }
 
     @Override
-    public synchronized void restoreState(Map<String, Object> map) {
-        this.eventHolderMap = (Map<Object, EventHolder>) map.get("eventHolderMap");
+    public ProcessingMode getProcessingMode() {
+        return ProcessingMode.BATCH;
+    }
+
+    class ExtensionState extends State {
+
+        @Override
+        public boolean canDestroy() {
+            return false;
+        }
+
+        @Override
+        public Map<String, Object> snapshot() {
+            synchronized (PriorityStreamProcessor.this) {
+                Map<String, Object> currentStateMap = new HashMap<String, Object>();
+                currentStateMap.put("eventHolderMap", eventHolderMap);
+                return currentStateMap;
+            }
+        }
+
+        @Override
+        public void restore(Map<String, Object> map) {
+            synchronized (PriorityStreamProcessor.this) {
+                eventHolderMap = (Map<Object, EventHolder>) map.get("eventHolderMap");
+            }
+        }
     }
 
     /**
@@ -483,7 +517,7 @@ public class PriorityStreamProcessor extends StreamProcessor implements Scheduli
          * @return cloned event
          */
         public StreamEvent copyStreamEvent() {
-            StreamEvent clonedEvent = streamEventCloner.copyStreamEvent(event);
+            StreamEvent clonedEvent = streamEventClonerHolder.getStreamEventCloner().copyStreamEvent(event);
             complexEventPopulater.populateComplexEvent(clonedEvent, new Object[]{key, priority});
             clonedEvent.setTimestamp(siddhiAppContext.getTimestampGenerator().currentTime());
             return clonedEvent;
