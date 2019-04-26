@@ -178,11 +178,6 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
     private VariableExpressionExecutor priorityExpressionExecutor;
 
     /**
-     * Keep track of events with priority higher than zero.
-     */
-    private Map<Object, EventHolder> eventHolderMap = new HashMap<Object, EventHolder>();
-
-    /**
      * A queue to maintain the events in the arrival order.
      * It provides circular buffer implementation.
      */
@@ -286,7 +281,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
                         Object key = this.keyBuffer.peek();
 
                         // Get the event holder
-                        EventHolder eventHolder = this.eventHolderMap.get(key);
+                        EventHolder eventHolder = state.eventHolderMap.get(key);
                         long timeDiff = eventHolder.getTimestamp() + timeInMilliSeconds - currentTime;
                         if (timeDiff <= 0) {
                             // Remove the first key from the queue
@@ -300,7 +295,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
                             // Decrease the priority
                             eventHolder.decreasePriority(currentTime);
                             if (eventHolder.isExpired()) {
-                                this.eventHolderMap.remove(key);
+                                state.eventHolderMap.remove(key);
                             } else {
                                 // If not expired, add the key to the end of the queue
                                 boolean isAdded = this.keyBuffer.offer(key);
@@ -323,7 +318,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
 
                     // Unique key of the event
                     Object key = this.keyExpressionExecutor.execute(streamEvent);
-                    EventHolder eventHolder = eventHolderMap.get(key);
+                    EventHolder eventHolder = state.eventHolderMap.get(key);
 
                     if (eventHolder == null) {
                         // Create a new event holder
@@ -331,7 +326,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
 
                         if (!eventHolder.isExpired()) {
                             // Event with a priority higher than 0
-                            this.eventHolderMap.put(key, eventHolder);
+                            state.eventHolderMap.put(key, eventHolder);
 
                             // Add the key into the queue
                             boolean isAdded = this.keyBuffer.offer(key);
@@ -345,7 +340,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
                         // Set the recent event and increase the priority
                         eventHolder.setEvent(clonedEvent);
                         if (eventHolder.isExpired()) {
-                            this.eventHolderMap.remove(key);
+                            state.eventHolderMap.remove(key);
                             this.keyBuffer.remove(key);
                         }
                     }
@@ -357,7 +352,7 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
                 }
 
                 // Schedule the next alert if this is a new event and there are events in the event holder map
-                if (lastTimestamp < currentTime && !eventHolderMap.isEmpty()) {
+                if (lastTimestamp < currentTime && !state.eventHolderMap.isEmpty()) {
                     scheduler.notifyAt(currentTime + timeInMilliSeconds);
                     lastTimestamp = currentTime;
                 }
@@ -398,6 +393,11 @@ public class PriorityStreamProcessor extends StreamProcessor<PriorityStreamProce
     }
 
     class ExtensionState extends State {
+
+        /**
+         * Keep track of events with priority higher than zero.
+         */
+        private Map<Object, EventHolder> eventHolderMap = new HashMap<Object, EventHolder>();
 
         @Override
         public boolean canDestroy() {
