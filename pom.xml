@@ -27,7 +27,7 @@
 
     <groupId>org.wso2.extension.siddhi.execution.priority</groupId>
     <artifactId>siddhi-execution-priority-parent</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Siddhi Execution Extension Priority Parent</name>
     <url>http://wso2.org</url>
@@ -58,7 +58,7 @@
         <url>https://github.com/wso2-extensions/siddhi-execution-priority.git</url>
         <developerConnection>scm:git:https://github.com/wso2-extensions/siddhi-execution-priority.git
         </developerConnection>
-        <tag>v5.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
